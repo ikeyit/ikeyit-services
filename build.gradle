@@ -1,0 +1,65 @@
+//运行gradle脚本自身需要的插件依赖
+buildscript {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+    }
+}
+
+
+plugins {
+    id 'org.springframework.boot' version '2.3.9.RELEASE'
+}
+
+
+allprojects {
+//    System.setProperty('socksProxyHost','127.0.0.1')
+//    System.setProperty('socksProxyPort','1080')
+    repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/public/'
+        }
+    }
+
+
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    group = 'com.ikeyit'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '1.8'
+    bootJar {
+        layered()
+    }
+    bootBuildImage {
+        builder = 'registry.cn-hangzhou.aliyuncs.com/paketo-buildpacks/builder:base-platform-api-0.3'
+        runImage = 'registry.cn-hangzhou.aliyuncs.com/paketo-buildpacks/run:base-cnb'
+        imageName = "ikeyit/${project.name}:${project.version}"
+    }
+
+    task bootPushImage {
+        group = 'build'
+        description = 'Pushes an OCI image of the application using the output of bootBuildImage task'
+        dependsOn bootBuildImage
+
+        doLast {
+            exec {
+                executable 'docker'
+                args 'tag', "${bootBuildImage.imageName}", "registry.cn-hangzhou.aliyuncs.com/${bootBuildImage.imageName}"
+            }
+
+            exec {
+                executable 'docker'
+                args 'push', "registry.cn-hangzhou.aliyuncs.com/${bootBuildImage.imageName}"
+            }
+
+
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}

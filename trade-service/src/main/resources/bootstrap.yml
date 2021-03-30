@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: trade-service
+# 降低最小运行要求，禁用nacos服务注册中心和配置中心
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+#        server-addr: nacos.ikeyit:8848
+      config:
+        enabled: false
+#        server-addr: nacos.ikeyit:8848
+#        file-extension: yaml

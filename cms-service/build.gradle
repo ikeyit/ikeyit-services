@@ -1,0 +1,12 @@
+jar.enabled=true
+bootJar.enabled=false
+bootRun.enabled=false
+bootBuildImage.enabled=false
+bootPushImage.enabled=false
+dependencies {
+    compile project(':common')
+    compile project(':passport-resource')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3'
+}

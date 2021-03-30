@@ -1,0 +1,26 @@
+dependencies {
+    compile project(':common')
+    compile project(':passport-security')
+    compile project(':passport-resource')
+    compile project(':message-service')
+    compile project(':user-service')
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery:2.2.5.RELEASE'
+    implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config:2.2.5.RELEASE'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3'
+    runtimeOnly 'mysql:mysql-connector-java'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+
+
+//bootBuildImage {
+//    builder = "mine/java-cnb-builder"
+//}

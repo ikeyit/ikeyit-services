@@ -1,0 +1,20 @@
+pluginManagement {
+    //使用阿里云gradle plugin镜像仓库
+    repositories {
+        maven { url "https://maven.aliyun.com/repository/gradle-plugin"}
+    }
+}
+
+rootProject.name = 'ikeyit-services'
+include 'common'
+include 'mqhelper'
+include 'passport-security'
+include 'passport-service'
+include 'passport-resource'
+include 'user-service'
+include 'product-service'
+include 'pay-service'
+include 'trade-service'
+include 'cms-service'
+include 'media-service'
+include 'message-service'

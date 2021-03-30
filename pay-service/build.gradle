@@ -1,0 +1,17 @@
+jar.enabled=true
+bootJar.enabled=false
+bootRun.enabled=false
+bootBuildImage.enabled=false
+bootPushImage.enabled=false
+dependencies {
+    compile project(':common')
+    compile project(':passport-resource')
+    compile project(':mqhelper')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:2.2.5.RELEASE'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3'
+    implementation 'org.apache.rocketmq:rocketmq-spring-boot-starter:2.1.1'
+    implementation 'com.github.wechatpay-apiv3:wechatpay-apache-httpclient:0.2.1'
+
+}

@@ -1,0 +1,44 @@
+server:
+  port: 9000
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
+      enabled: true
+spring:
+  profiles:  
+    active: dev
+  jackson:
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+  datasource:
+    url: jdbc:mysql://localhost:3306/passport?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: your_mysql_username
+    password: your_mysql_password
+    driverClassName: com.mysql.cj.jdbc.Driver
+  redis:
+    host: localhost
+    port: 6379
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9000/auth/jwks
+
+rocketmq:
+  name-server: localhost:9876
+  producer:
+    group: group-passport
+
+passport:
+  jwt:
+    access-token-lifetime: 1800
+    refresh-token-lifetime: 2592000
+#生产环境务必替换为自己的RSA密钥对
+    keystore:
+      file: classpath:jwt.jks
+      password: 123456
+    key:
+      alias: ikeyi
+      password: 123456
+

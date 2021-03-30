@@ -1,0 +1,39 @@
+server:
+  port: 9001
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
+      enabled: true
+
+spring:
+  profiles:  
+    active: dev
+  jackson:
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+  datasource:
+    url: jdbc:mysql://localhost:3306/product?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: your_mysql_username
+    password: your_mysql_password
+    driverClassName: com.mysql.cj.jdbc.Driver
+  redis:
+    host: localhost
+    port: 6379
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9000/auth/jwks
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
+      time-to-live: 600000
+      use-key-prefix: true
+
+rocketmq:
+  name-server: localhost:9876
+  producer:
+    group: group-product
+

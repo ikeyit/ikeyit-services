@@ -1,0 +1,9 @@
+jar.enabled=true
+bootJar.enabled=false
+bootRun.enabled=false
+bootBuildImage.enabled=false
+bootPushImage.enabled=false
+dependencies {
+    implementation project(':common')
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+}
