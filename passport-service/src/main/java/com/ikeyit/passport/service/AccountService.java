@@ -2,6 +2,7 @@ package com.ikeyit.passport.service;
 
 import com.ikeyit.passport.domain.User;
 import com.ikeyit.passport.repository.UserRepository;
+import com.ikeyit.passport.resource.AuthenticationService;
 import com.ikeyit.security.mobile.authentication.SmsCodeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,7 +140,6 @@ public class AccountService {
             throw new UsernameNotFoundException("用户不存在");
         return user;
     }
-
 
     public void updatePasswordSendSmsCode() {
         Long userId = authenticationService.getCurrentUserId();

@@ -35,11 +35,11 @@ public class MiniProgramAuthenticationProvider extends AppSocialAuthenticationPr
         String encryptedUserInfo = authenticationToken.getUserInfo();
         String iv = authenticationToken.getIv();
 
-        WeixinClient miniProgramClient = clientRepository.getClient(appId);
-        if (miniProgramClient == null)
-            throw new BadCredentialsException("未找到小程序客户端");
+        WeixinClient weixinClient = clientRepository.getClient(appId);
+        if (weixinClient == null)
+            throw new BadCredentialsException("微信客户端未授权，appId：" + appId);
 
-        String appSecret = miniProgramClient.getAppSecret();
+        String appSecret = weixinClient.getAppSecret();
         JsonNode response = null;
         try {
             response = restTemplate.getForObject(URL_AUTH, JsonNode.class, appId, appSecret, code);
@@ -67,18 +67,29 @@ public class MiniProgramAuthenticationProvider extends AppSocialAuthenticationPr
             String nickName = userInfoJson.path("nickName").asText();
             String avatarUrl = userInfoJson.path("avatarUrl").asText();
 
-            if(miniProgramClient.getUnionName() != null) {
+            AppSocialUserInfo appSocialUserInfo = new AppSocialUserInfo();
+            appSocialUserInfo.setNick(nickName);
+            appSocialUserInfo.setAvatar(avatarUrl);
+            appSocialUserInfo.addExtra("appId", weixinClient.getAppId());
+            appSocialUserInfo.addExtra("appName", weixinClient.getAppName());
+
+            // union name不为空就启用 union 模式，在union模式下，用unionId而不是openId标识一个微信用户，。
+            // 同一个微信用户访问同一个主体下的不同小程序、公众号的openId是不一样的，但unionId是一样的
+            if(weixinClient.getUnionName() != null) {
                 if (!StringUtils.hasText(unionId))
                     throw new BadCredentialsException("找不到unionid");
-                AppSocialUserInfo appSocialUserInfo = new AppSocialUserInfo(unionId, miniProgramClient.getUnionName(), avatarUrl, nickName);
+                appSocialUserInfo.setProvider("weixin-union-" + weixinClient.getUnionName());
+                appSocialUserInfo.setProviderUserId(unionId);
                 appSocialUserInfo.addExtra("openId", openId);
-                appSocialUserInfo.addExtra("appId", miniProgramClient.getAppId());
-                appSocialUserInfo.addExtra("appName", miniProgramClient.getAppName());
-                return new MiniProgramAuthenticationToken(appSocialUserInfo,null);
+                appSocialUserInfo.addExtra("unionName", weixinClient.getUnionName());
             } else {
-                return new MiniProgramAuthenticationToken(new AppSocialUserInfo(openId, miniProgramClient.getAppName(), avatarUrl, nickName),null);
+                appSocialUserInfo.setProvider("weixin-app-" + weixinClient.getAppName());
+                appSocialUserInfo.setProviderUserId(openId);
             }
 
+            return new MiniProgramAuthenticationToken(appSocialUserInfo,null);
+        } catch (BadCredentialsException e) {
+            throw e;
         } catch (Exception ex) {
             throw new BadCredentialsException("微信接口故障", ex);
         }

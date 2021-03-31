@@ -7,7 +7,6 @@ import com.ikeyit.security.social.weixin.InMemoryWeixinClientRepository;
 import com.ikeyit.security.social.weixin.MiniProgramAuthenticationProvider;
 import com.ikeyit.security.social.weixin.WeixinAuthenticationProvider;
 import com.ikeyit.security.social.weixin.WeixinClientRepository;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -27,10 +26,11 @@ public class WeixinAuthenticationConfigurer<B extends HttpSecurityBuilder<B>>
 
     private AppSocialUserService appSocialUserService;
 
+    private WeixinClientRepository weixinClientRepository;
 
     public WeixinAuthenticationConfigurer<B> weixinClientRepository(WeixinClientRepository weixinClientRepository) {
         Assert.notNull(weixinClientRepository, "WeixinClientRepository cannot be null");
-        this.getBuilder().setSharedObject(WeixinClientRepository.class, weixinClientRepository);
+        this.weixinClientRepository = weixinClientRepository;
         return this;
     }
 
@@ -64,15 +64,22 @@ public class WeixinAuthenticationConfigurer<B extends HttpSecurityBuilder<B>>
 
 
     private WeixinClientRepository getWeixinClientRepository(B builder) {
-        WeixinClientRepository weixinClientRepository = builder.getSharedObject(WeixinClientRepository.class);
-        if (weixinClientRepository == null)
-            weixinClientRepository = builder.getSharedObject(ApplicationContext.class).getBean(WeixinClientRepository.class);
-        if (weixinClientRepository == null) {
-            weixinClientRepository = new InMemoryWeixinClientRepository();
-            builder.setSharedObject(WeixinClientRepository.class, weixinClientRepository);
-        }
+//        WeixinClientRepository weixinClientRepository = builder.getSharedObject(WeixinClientRepository.class);
+//        if (weixinClientRepository == null)
+//            weixinClientRepository = builder.getSharedObject(ApplicationContext.class).getBean(WeixinClientRepository.class);
+//        if (weixinClientRepository == null) {
+//            weixinClientRepository = new InMemoryWeixinClientRepository();
+//            builder.setSharedObject(WeixinClientRepository.class, weixinClientRepository);
+//        }
+//
+//        return weixinClientRepository;
 
-        return weixinClientRepository;
+
+        if (this.weixinClientRepository != null)
+            return this.weixinClientRepository;
+
+        this.weixinClientRepository = new InMemoryWeixinClientRepository();
+        return this.weixinClientRepository;
     }
 
 

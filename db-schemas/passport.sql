@@ -40,8 +40,7 @@ CREATE TABLE `user_connection`
 CREATE TABLE `weixin_connection`
 (
     `userId`     bigint(20)   NOT NULL COMMENT '用户在我方的账户名',
-    `appId`      varchar(32)  NOT NULL COMMENT '微信应用名称',
-    `appName`    varchar(100) NOT NULL COMMENT '微信应用名称',
+    `appId`      varchar(32)  NOT NULL COMMENT '微信应用ID',
     `openId`     varchar(128) NOT NULL COMMENT 'openId',
     `unionId`    varchar(128) NOT NULL COMMENT 'unionId',
     `createTime` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',

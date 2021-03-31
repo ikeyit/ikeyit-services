@@ -14,33 +14,39 @@ public class AppSocialUserInfo {
 
     private HashMap<String, Object> extras = new HashMap<>();
 
-    public AppSocialUserInfo(String providerUserId, String provider, String avatar, String nick) {
-        this.providerUserId = providerUserId;
-        this.provider = provider;
-        this.avatar = avatar;
-        this.nick = nick;
-    }
-
-    public AppSocialUserInfo(String providerUserId, String provider) {
-        this.providerUserId = providerUserId;
-        this.provider = provider;
+    public AppSocialUserInfo() {
     }
 
     public String getProviderUserId() {
         return providerUserId;
     }
 
+    public void setProviderUserId(String providerUserId) {
+        this.providerUserId = providerUserId;
+    }
 
     public String getProvider() {
         return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getNick() {
         return nick;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
     public void addExtra(String name, Object value) {
@@ -50,4 +56,6 @@ public class AppSocialUserInfo {
     public Object getExtra(String name) {
         return extras.get(name);
     }
+
+
 }

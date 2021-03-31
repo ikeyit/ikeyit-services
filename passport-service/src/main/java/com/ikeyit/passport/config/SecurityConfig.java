@@ -1,6 +1,7 @@
 package com.ikeyit.passport.config;
 
 
+import com.ikeyit.passport.repository.DbWeixinClientRepository;
 import com.ikeyit.passport.resource.AuthenticationService;
 import com.ikeyit.passport.resource.impl.AuthenticationServiceImpl;
 import com.ikeyit.passport.service.UserPrincipal;
@@ -103,6 +104,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     StringRedisTemplate redisTemplate;
 
+    @Autowired
+    DbWeixinClientRepository dbWeixinClientRepository;
+
+
     @Bean
     public RefreshTokenRevoker redisRefreshTokenRevoker() {
         return new RedisRefreshTokenRevoker(redisTemplate);
@@ -142,7 +147,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //允许浏览器客户端跨域调用，
-        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()).and()
+        http.cors().configurationSource(request -> {
+            CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
+//                corsConfiguration.addAllowedMethod(HttpMethod.PUT);
+//                corsConfiguration.addAllowedMethod(HttpMethod.PATCH);
+//                corsConfiguration.addAllowedMethod(HttpMethod.OPTIONS);
+//                corsConfiguration.addAllowedMethod(HttpMethod.DELETE);
+            corsConfiguration.addAllowedMethod(CorsConfiguration.ALL);
+            corsConfiguration.addAllowedOrigin(CorsConfiguration.ALL);
+//                corsConfiguration.setAllowCredentials(true);
+//                corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);
+            return corsConfiguration;
+        }).and()
             //禁用无用的防跨站请求伪造攻击
             .csrf().disable()
             //禁用basic认证
@@ -178,6 +194,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             //添加微信认证
             .apply(new WeixinAuthenticationConfigurer<HttpSecurity>()
                     .appSocialUserService(userPrincipalService)
+                    .weixinClientRepository(dbWeixinClientRepository)
                     .loginUrl("/auth/weixin")).and()
             .authorizeRequests()
                 .anyRequest().authenticated().and()

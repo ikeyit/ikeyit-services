@@ -101,7 +101,7 @@ public class UserPrincipalService implements UserDetailsService, MobileUserServi
         userRepository.create(user);
         Authority authority = new Authority();
         authority.setUserId(user.getId());
-        authority.setRole("NEW_USER");
+        authority.setRole("USER");
         authorityRepository.create(authority);
         return user;
     }
@@ -137,21 +137,23 @@ public class UserPrincipalService implements UserDetailsService, MobileUserServi
         }
 
         //微信Union方式，记录一下openId unionId
-        if ("weixin".equals(appSocialUserInfo.getProvider())) {
-            String openId = (String)appSocialUserInfo.getExtra("openId");
-            String appName = (String)appSocialUserInfo.getExtra("appName");
-            String appId = (String)appSocialUserInfo.getExtra("appId");
-            WeixinConnection weixinConnection = weixinConnectionRepository.getByOpenId(openId);
-            if (weixinConnection == null) {
-                weixinConnection = new WeixinConnection();
-                weixinConnection.setUserId(user.getId());
-                weixinConnection.setAppId(appId);
-                weixinConnection.setAppName(appName);
-                weixinConnection.setUnionId(appSocialUserInfo.getProviderUserId());
-                weixinConnection.setOpenId(openId);
-                weixinConnectionRepository.create(weixinConnection);
-            } else {
-                weixinConnectionRepository.update(weixinConnection);
+        if (appSocialUserInfo.getProvider().startsWith("weixin-")) {
+            String unionName = (String) appSocialUserInfo.getExtra("unionName");
+            if (unionName != null) {
+                String openId = (String)appSocialUserInfo.getExtra("openId");
+                String appName = (String)appSocialUserInfo.getExtra("appName");
+                String appId = (String)appSocialUserInfo.getExtra("appId");
+                WeixinConnection weixinConnection = weixinConnectionRepository.getByOpenId(openId);
+                if (weixinConnection == null) {
+                    weixinConnection = new WeixinConnection();
+                    weixinConnection.setUserId(user.getId());
+                    weixinConnection.setAppId(appId);
+                    weixinConnection.setUnionId(appSocialUserInfo.getProviderUserId());
+                    weixinConnection.setOpenId(openId);
+                    weixinConnectionRepository.create(weixinConnection);
+                } else {
+                    weixinConnectionRepository.update(weixinConnection);
+                }
             }
         }
         return buildUserPrincipal(user);

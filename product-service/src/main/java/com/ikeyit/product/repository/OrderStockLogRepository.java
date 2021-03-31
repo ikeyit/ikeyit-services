@@ -8,16 +8,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderStockLogRepository {
 
-    @Select("SELECT * FROM order_stock_Log WHERE orderId = #{orderId}")
+    @Select("SELECT * FROM order_stock_log WHERE orderId = #{orderId}")
     OrderStockLog getByOrderId(Long orderId);
 
     @Options(useGeneratedKeys=true, keyProperty="id")
-    @Insert("INSERT INTO order_stock_Log (orderId, content, status) VALUES (#{orderId}, #{content}, #{status})")
+    @Insert("INSERT INTO order_stock_log (orderId, content, status) VALUES (#{orderId}, #{content}, #{status})")
     void create(OrderStockLog orderStockLog);
 
-    @Update("UPDATE order_stock_Log SET status = #{newStatus} WHERE orderId = #{orderId} AND status = #{oldStatus}")
+    @Update("UPDATE order_stock_log SET status = #{newStatus} WHERE orderId = #{orderId} AND status = #{oldStatus}")
     int updateStatus(Long orderId, Integer oldStatus, Integer newStatus);
 
-    @Delete("DELETE FROM order_stock_Log WHERE orderId = #{orderId}")
+    @Delete("DELETE FROM order_stock_log WHERE orderId = #{orderId}")
     int delete(Long orderId);
 }

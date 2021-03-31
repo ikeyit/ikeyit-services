@@ -2,6 +2,7 @@ package com.ikeyit.passport.service;
 
 import com.ikeyit.passport.domain.WeixinConnection;
 import com.ikeyit.passport.repository.WeixinConnectionRepository;
+import com.ikeyit.passport.resource.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

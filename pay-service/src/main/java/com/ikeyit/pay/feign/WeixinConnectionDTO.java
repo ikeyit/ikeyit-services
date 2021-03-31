@@ -4,8 +4,6 @@ public class WeixinConnectionDTO {
 
     private Long userId;
 
-    private String appName;
-
     private String appId;
 
     private String unionId;
@@ -18,14 +16,6 @@ public class WeixinConnectionDTO {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
     }
 
     public String getAppId() {

@@ -4,8 +4,6 @@ public class WeixinConnection {
 
     private Long userId;
 
-    private String appName;
-
     private String appId;
 
     private String unionId;
@@ -26,14 +24,6 @@ public class WeixinConnection {
 
     public void setAppId(String appId) {
         this.appId = appId;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
     }
 
     public String getUnionId() {
