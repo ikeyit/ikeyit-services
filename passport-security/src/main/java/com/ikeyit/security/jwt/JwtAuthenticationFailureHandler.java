@@ -27,5 +27,8 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         objectMapper.writeValue(response.getWriter(), new RestError("UNAUTHORIZED", exception.getMessage()));
+
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
+
     }
 }

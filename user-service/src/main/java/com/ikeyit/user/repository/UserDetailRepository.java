@@ -15,8 +15,8 @@ import java.util.List;
 @Repository
 public interface UserDetailRepository {
 
-	@Select("SELECT * FROM user WHERE name = #{name}")
-	UserDetail getByName(String name);
+	@Select("SELECT * FROM user WHERE loginName = #{loginName}")
+	UserDetail getByLoginName(String name);
 
 	@Select("SELECT * FROM user WHERE email = #{email}")
 	UserDetail getByEmail(String email);

@@ -120,7 +120,7 @@ public class SellerProductService {
      */
     @Transactional
     public void createProduct(EditProductParam editProductParam) {
-        authenticationService.requireAuthority("ROLE_SELLER");
+        authenticationService.requireAuthority("r_seller");
         Long sellerId = authenticationService.getCurrentUserId();
         Product product = new Product();
         validateCoreParam(editProductParam, product);
@@ -170,7 +170,7 @@ public class SellerProductService {
      */
     @Transactional
     public void updateProduct(EditProductParam editProductParam) {
-        authenticationService.requireAuthority("ROLE_SELLER");
+        authenticationService.requireAuthority("r_seller");
         Long sellerId = authenticationService.getCurrentUserId();
         Long productId = editProductParam.getId();
         Product product = getSafeProduct(productId);

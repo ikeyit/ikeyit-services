@@ -1,9 +1,11 @@
 package com.ikeyit.user.domain;
 
+import java.util.Objects;
+
 public class UserDetail {
     Long id;
 
-    String name;
+    String loginName;
 
     String mobile;
 
@@ -25,12 +27,12 @@ public class UserDetail {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getLoginName() {
+        return loginName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
     }
 
     public String getMobile() {
@@ -82,10 +84,30 @@ public class UserDetail {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserDetail)) return false;
+        UserDetail that = (UserDetail) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(loginName, that.loginName) &&
+                Objects.equals(mobile, that.mobile) &&
+                Objects.equals(email, that.email) &&
+                Objects.equals(nick, that.nick) &&
+                Objects.equals(avatar, that.avatar) &&
+                Objects.equals(sex, that.sex) &&
+                Objects.equals(location, that.location);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, loginName, mobile, email, nick, avatar, sex, location);
+    }
+
+    @Override
     public String toString() {
         return "UserDetail{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", loginName='" + loginName + '\'' +
                 ", mobile='" + mobile + '\'' +
                 ", email='" + email + '\'' +
                 ", nick='" + nick + '\'' +

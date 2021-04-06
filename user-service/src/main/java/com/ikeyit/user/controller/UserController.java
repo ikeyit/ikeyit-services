@@ -3,7 +3,7 @@ package com.ikeyit.user.controller;
 import com.ikeyit.common.domain.Page;
 import com.ikeyit.common.domain.PageParam;
 import com.ikeyit.user.domain.Address;
-import com.ikeyit.user.domain.UserDetail;
+import com.ikeyit.user.dto.UserDetailDTO;
 import com.ikeyit.user.service.AddressService;
 import com.ikeyit.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,29 +21,29 @@ public class UserController {
     AddressService addressService;
 
     @GetMapping("/user")
-    public UserDetail getUser() {
+    public UserDetailDTO getUser() {
         return userService.getCurrentUser();
     }
 
 
     @GetMapping("/user/{id}")
-    public UserDetail getUser(@PathVariable Long id) {
+    public UserDetailDTO getUser(@PathVariable Long id) {
         return userService.getUser(id);
     }
 
     @GetMapping("/users")
-    public Page<UserDetail> getUser(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int pageSize) {
+    public Page<UserDetailDTO> getUser(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "3") int pageSize) {
         return userService.getUsers(new PageParam(page, pageSize));
     }
 
 
     @PatchMapping("/user")
-    public UserDetail updateUser(
+    public void updateUser(
                            @RequestParam(required = false) String nick,
                            @RequestParam(required = false) String avatar,
                            @RequestParam(required = false) String location,
                            @RequestParam(required = false) Integer sex) {
-        return userService.updateUser(nick, avatar, location, sex);
+        userService.updateUser(nick, avatar, location, sex);
     }
 
     @GetMapping("/user/addresses")

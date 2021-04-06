@@ -1,37 +1,21 @@
-package com.ikeyit.passport.domain;
+package com.ikeyit.user.dto;
 
-import java.time.LocalDateTime;
-
-public class User {
-
-    Long id; //
+public class UserDetailDTO {
+    Long id;
 
     String loginName;
-
-    String password;
 
     String mobile;
 
     String email;
 
-    String nick;//显示名
+    String nick;
 
     String avatar;
 
     Integer sex = 0;
 
     String location;
-
-    Boolean enabled;
-
-    Boolean verified;
-
-	LocalDateTime createTime;
-
-	LocalDateTime updateTime;
-
-    public User() {
-    }
 
     public Long getId() {
         return id;
@@ -47,14 +31,6 @@ public class User {
 
     public void setLoginName(String loginName) {
         this.loginName = loginName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getMobile() {
@@ -103,38 +79,5 @@ public class User {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public Boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public Boolean isVerified() {
-        return verified;
-    }
-
-    public void setVerified(Boolean verified) {
-        this.verified = verified;
-    }
-
-
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
-    }
-
-    public LocalDateTime getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(LocalDateTime updateTime) {
-        this.updateTime = updateTime;
     }
 }

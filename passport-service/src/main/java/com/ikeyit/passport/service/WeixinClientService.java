@@ -19,22 +19,22 @@ public class WeixinClientService {
 
 
     public void createWeixinClient(WeixinClient weixinClient) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         weixinClientRepository.create(weixinClient);
     }
 
     public void updateWeixinClient(WeixinClient weixinClient) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         weixinClientRepository.update(weixinClient);
     }
 
     public void deleteWeixinClient(String appId) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         weixinClientRepository.deleteByAppId(appId);
     }
 
     public List<WeixinClient> getWeixinClients() {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         return weixinClientRepository.list();
     }
 }

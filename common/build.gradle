@@ -5,4 +5,5 @@ bootBuildImage.enabled=false
 bootPushImage.enabled=false
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'javax.validation:validation-api:2.0.1.Final'
 }

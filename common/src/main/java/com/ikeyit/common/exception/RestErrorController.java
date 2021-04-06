@@ -20,6 +20,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import java.util.Locale;
 import java.util.Map;
 
@@ -87,6 +88,17 @@ public class RestErrorController extends AbstractErrorController {
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(exception.getStatus()));
     }
 
+    /**
+     * 转换Validation Exception
+     * @param exception
+     * @param locale
+     * @return
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException exception, Locale locale){
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, CommonErrorCode.INVALID_ARGUMENT, locale, new String[]{exception.getMessage()});
+    }
+
     @ExceptionHandler({MethodArgumentNotValidException.class,
             MissingServletRequestParameterException.class,
             MethodArgumentNotValidException.class,
@@ -96,6 +108,7 @@ public class RestErrorController extends AbstractErrorController {
         log.error("出错了：", exception);
         return buildErrorResponse(HttpStatus.BAD_REQUEST, CommonErrorCode.INVALID_ARGUMENT, locale, (Object[]) null);
     }
+
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<ErrorResponse> handleException(Throwable exception, Locale locale){

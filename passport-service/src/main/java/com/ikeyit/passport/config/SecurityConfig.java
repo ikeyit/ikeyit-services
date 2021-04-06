@@ -3,6 +3,7 @@ package com.ikeyit.passport.config;
 
 import com.ikeyit.passport.repository.DbWeixinClientRepository;
 import com.ikeyit.passport.resource.AuthenticationService;
+import com.ikeyit.passport.resource.JwtConfigurerCustomizer;
 import com.ikeyit.passport.resource.impl.AuthenticationServiceImpl;
 import com.ikeyit.passport.service.UserPrincipal;
 import com.ikeyit.passport.service.UserPrincipalService;
@@ -15,6 +16,9 @@ import com.ikeyit.security.mobile.config.SmsCodeAuthenticationConfigurer;
 import com.ikeyit.security.social.config.WeixinAuthenticationConfigurer;
 import com.ikeyit.security.social.weixin.PropertiesWeixinClientRepository;
 import com.ikeyit.security.social.weixin.WeixinClientRepository;
+import com.ikeyit.security.verification.DefaultVerificationCodeService;
+import com.ikeyit.security.verification.RedisVerificationCodeRepository;
+import com.ikeyit.security.verification.VerificationCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -114,6 +118,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    public VerificationCodeService verificationCodeService() {
+        RedisVerificationCodeRepository redisVerificationCodeRepository = new RedisVerificationCodeRepository(redisTemplate);
+        return new DefaultVerificationCodeService(redisVerificationCodeRepository);
+    }
+
+    @Bean
     public JwtService jwtService() {
         JwtService jwtService = new JwtService() {
             @Override
@@ -204,7 +214,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .oauth2ResourceServer()
                 .bearerTokenResolver(bearerTokenResolver())
                 .authenticationEntryPoint(this::authenticationEntryPoint)
-                .jwt();
+                .jwt(JwtConfigurerCustomizer::customize);
     }
 
     @Bean

@@ -2,6 +2,7 @@ package com.ikeyit.trade.config;
 
 
 import com.ikeyit.passport.resource.AuthenticationService;
+import com.ikeyit.passport.resource.JwtConfigurerCustomizer;
 import com.ikeyit.passport.resource.impl.AuthenticationServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -62,8 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .anyRequest().authenticated().and()
             .exceptionHandling().accessDeniedHandler(this::accessDeniedHandler).authenticationEntryPoint(this::authenticationEntryPoint).and()
-            .oauth2ResourceServer().authenticationEntryPoint(this::authenticationEntryPoint).jwt();
-//            .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+            .oauth2ResourceServer()
+                .authenticationEntryPoint(this::authenticationEntryPoint)
+                .jwt(JwtConfigurerCustomizer::customize);
     }
 
     private void accessDeniedHandler(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception) throws IOException {
@@ -73,14 +75,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
     }
 
-//    JwtAuthenticationConverter jwtAuthenticationConverter() {
-//        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-////        grantedAuthoritiesConverter.setAuthoritiesClaimName("scp");
-////        grantedAuthoritiesConverter.setAuthorityPrefix("");
-//        JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
-//        authenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-//        return authenticationConverter;
-//    }
     @Bean
     public AuthenticationService authenticationService() {
         return new AuthenticationServiceImpl();

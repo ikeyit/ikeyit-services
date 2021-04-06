@@ -1,14 +1,8 @@
 package com.ikeyit.passport.service;
 
 import com.ikeyit.common.utils.IdUtils;
-import com.ikeyit.passport.domain.Authority;
-import com.ikeyit.passport.domain.User;
-import com.ikeyit.passport.domain.UserConnection;
-import com.ikeyit.passport.domain.WeixinConnection;
-import com.ikeyit.passport.repository.AuthorityRepository;
-import com.ikeyit.passport.repository.UserConnectionRepository;
-import com.ikeyit.passport.repository.UserRepository;
-import com.ikeyit.passport.repository.WeixinConnectionRepository;
+import com.ikeyit.passport.domain.*;
+import com.ikeyit.passport.repository.*;
 import com.ikeyit.security.jwt.RefreshTokenUserService;
 import com.ikeyit.security.mobile.authentication.MobileUserService;
 import com.ikeyit.security.social.authentication.AppSocialUserInfo;
@@ -28,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 认证用户服务。
@@ -41,23 +36,33 @@ public class UserPrincipalService implements UserDetailsService, MobileUserServi
 
     UserRepository userRepository;
 
-    AuthorityRepository authorityRepository;
-
     UserConnectionRepository userConnectionRepository;
 
     WeixinConnectionRepository weixinConnectionRepository;
 
+    PermissionRepository permissionRepository;
+
+    RoleRepository roleRepository;
+
     @Autowired
     public UserPrincipalService(UserRepository userRepository,
-                                AuthorityRepository authorityRepository,
                                 UserConnectionRepository userConnectionRepository,
-                                WeixinConnectionRepository weixinConnectionRepository) {
+                                WeixinConnectionRepository weixinConnectionRepository,
+                                PermissionRepository permissionRepository,
+                                RoleRepository roleRepository) {
         this.userRepository = userRepository;
-        this.authorityRepository = authorityRepository;
         this.userConnectionRepository = userConnectionRepository;
         this.weixinConnectionRepository = weixinConnectionRepository;
+        this.permissionRepository = permissionRepository;
+        this.roleRepository = roleRepository;
     }
 
+    /**
+     * 根据登录名查找用户
+     * @param loginName
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String loginName) throws UsernameNotFoundException {
         if (StringUtils.isEmpty(loginName))
@@ -69,6 +74,12 @@ public class UserPrincipalService implements UserDetailsService, MobileUserServi
         return buildUserPrincipal(user);
     }
 
+    /**
+     * 根据手机号查找用户
+     * @param mobile
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
     @Transactional
     public UserDetails loadUserByMobile(String mobile) throws UsernameNotFoundException {
@@ -81,6 +92,11 @@ public class UserPrincipalService implements UserDetailsService, MobileUserServi
         return buildUserPrincipal(user);
     }
 
+    /**
+     * 实现RefreshTokenUserService，根据jwt中的subject返回用户，实际为用户ID
+     * @param subject
+     * @return
+     */
     @Override
     public UserDetails loadUserBySubject(String subject) {
         if (StringUtils.isEmpty(subject))
@@ -92,6 +108,13 @@ public class UserPrincipalService implements UserDetailsService, MobileUserServi
     }
 
 
+    /**
+     * 使用第三方登录时，如果时初次登录，则创建一个关联的默认本地用户
+     * @param mobile
+     * @param nick
+     * @param avatar
+     * @return
+     */
     private User createDefaultUser(String mobile, String nick, String avatar) {
         User user = new User();
         user.setLoginName(IdUtils.uuid());
@@ -99,14 +122,15 @@ public class UserPrincipalService implements UserDetailsService, MobileUserServi
         user.setAvatar(avatar);
         user.setNick(nick);
         userRepository.create(user);
-        Authority authority = new Authority();
-        authority.setUserId(user.getId());
-        authority.setRole("USER");
-        authorityRepository.create(authority);
         return user;
     }
 
 
+    /**
+     * 根据第三方登录结果，返回对应的本地用户
+     * @param appSocialUserInfo
+     * @return
+     */
     @Override
     @Transactional
     public UserPrincipal loadUserBySocialUser(AppSocialUserInfo appSocialUserInfo) {
@@ -160,13 +184,29 @@ public class UserPrincipalService implements UserDetailsService, MobileUserServi
     }
 
     private UserPrincipal buildUserPrincipal(User user) {
-        List<Authority> authorities = authorityRepository.getByUserId(user.getId());
-        Set<GrantedAuthority> grantedAuthorities = authorities.stream()
-                .map(item-> new SimpleGrantedAuthority(item.getRole()))
-                .collect(Collectors.toSet());
-
-        return new UserPrincipal(user.getId(),user.getLoginName(),user.getPassword(), user.getNick(), user.getAvatar(),true,true,true,true, grantedAuthorities);
+        Set<GrantedAuthority> grantedAuthorities = getAuthorities(user.getId());
+        return new UserPrincipal(user.getId(),user.getLoginName(),user.getPassword(),
+                user.getNick(), user.getAvatar(),user.isEnabled(),true,true,true,
+                grantedAuthorities);
     }
 
+    /**
+     * 获取用户的权限。
+     * 角色和权限都会包含在返回的集合里。角色以r_开头，权限以p_开头
+     * @param userId
+     * @return
+     */
+    private Set<GrantedAuthority> getAuthorities(Long userId) {
+        List<Role> roles = roleRepository.getUserRoles(userId);
+        Stream<GrantedAuthority> grantedRoles = roles.stream()
+                .map(item-> new SimpleGrantedAuthority("r_" + item.getName()));
+
+        List<Permission> permissions = permissionRepository.getUserPermissions(userId);
+        Stream<GrantedAuthority> grantedPermissions = permissions.stream()
+                .map(item-> new SimpleGrantedAuthority("p_" + item.getName()));
+
+        Set<GrantedAuthority>  grantedAuthorities = Stream.concat(grantedRoles, grantedPermissions).collect(Collectors.toSet());
+        return grantedAuthorities;
+    }
 
 }

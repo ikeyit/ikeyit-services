@@ -42,7 +42,7 @@ public class CategoryService {
      * @return
      */
     public int createCategory(EditCategoryParam editCategoryParam) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         Category category = new Category();
         Long parentId = editCategoryParam.getParentId();
         if (parentId != null && parentId > 0) {
@@ -70,7 +70,7 @@ public class CategoryService {
      * @return
      */
     public int updateCategory(EditCategoryParam editCategoryParam) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         Category category = getExistingCategory(editCategoryParam.getId());
         if (editCategoryParam.getStatus()!=null)
             category.setStatus(editCategoryParam.getStatus());
@@ -86,7 +86,7 @@ public class CategoryService {
      */
     @Transactional
     public void updateCategoryAttributes(UpdateCategoryAttributesParam updateCategoryAttributesParam) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         Long categoryId = updateCategoryAttributesParam.getId();
         Category category = getExistingCategory(categoryId);
         Map<Long, CategoryAttribute> prevCategoryAttributes = categoryAttributeRepository.mapByAttributeId(categoryId);
@@ -129,7 +129,7 @@ public class CategoryService {
      * @return
      */
     public int obsoleteCategory(Long id) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         Category category = getExistingCategory(id);
         if (category.getLevel() == 0) {
             categoryRepository.obsoleteByGrandparentId(id);
@@ -147,7 +147,7 @@ public class CategoryService {
      * @return
      */
     public CategoryDTO getCategoryDetail(Long id) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         Category category = getExistingCategory(id);
         CategoryDTO categoryDTO = buildCategoryDTO(category);
         List<AttributeDTO>  attributes = attributeService.getAttributesByCategory(id);

@@ -66,7 +66,7 @@ public class AttributeService {
     }
 
     public Page<AttributeDTO> getAttributes(String name, PageParam pageParam) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         Page<Attribute> attributes = attributeRepository.get(name, pageParam);
         return Page.map(attributes, attribute -> {
             AttributeDTO attributeDTO = new AttributeDTO();
@@ -85,7 +85,7 @@ public class AttributeService {
     }
 
     public AttributeDTO getAttributeDetail(Long id) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         Attribute attribute = attributeRepository.getById(id);
         if (attribute == null)
             throw new BusinessException(CommonErrorCode.INVALID_ARGUMENT);
@@ -111,7 +111,7 @@ public class AttributeService {
 
     @Transactional
     public void createAttribute(EditAttributeParam editAttributeParam) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         Attribute attribute = new Attribute();
         attribute.setAttributeType(editAttributeParam.getAttributeType());
         attribute.setName(editAttributeParam.getName());
@@ -138,7 +138,7 @@ public class AttributeService {
     }
 
     public int obsoleteAttribute(Long id) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         int i = attributeRepository.obsolete(id);
         if (i > 0)
             attributeValueRepository.obsoleteByAttributeId(id);
@@ -147,7 +147,7 @@ public class AttributeService {
 
     @Transactional
     public void updateAttribute(EditAttributeParam editAttributeParam) {
-        authenticationService.requireAuthority("ROLE_SUPER");
+        authenticationService.requireAuthority("r_super");
         if (editAttributeParam.getAttributeId() == null)
             throw new BusinessException(CommonErrorCode.INVALID_ARGUMENT);
         Attribute attribute = attributeRepository.getById(editAttributeParam.getAttributeId());

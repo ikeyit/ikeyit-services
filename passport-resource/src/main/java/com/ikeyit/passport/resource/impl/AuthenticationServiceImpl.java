@@ -32,16 +32,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null)
             return false;
-
         return hasAuthority(authentication, authority);
     }
 
     private boolean hasAuthority(Authentication authentication, String authority) {
         if (authority == null)
             return false;
-        //JWT spring security加了SCOPE前缀！
-        //
-        authority = "SCOPE_" + authority;
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         if (authorities == null)
             return false;
