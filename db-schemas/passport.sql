@@ -124,17 +124,16 @@ CREATE TABLE `weixin_connection` (
 
 INSERT INTO `user` (`id`, `password`, `loginName`, `mobile`, `email`, `nick`, `avatar`, `location`, `sex`, `enabled`,
                     `verified`)
-VALUES ('1', '$2a$10$7euayjUpvbMPdj2rG1H2ueysP/AezgRaHlDAstZgN5Cw9Li/PXwOi', 'ikeyi', '10000000000', 'ikeyi@ikeyi.com',
+VALUES ('1', '$2a$10$7euayjUpvbMPdj2rG1H2ueysP/AezgRaHlDAstZgN5Cw9Li/PXwOi', 'ikeyit', '10000000000', 'ikeyit@qq.com',
         '盘古',
         'http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKeRIqwBBgdTiaF3DicEnZMdee9KrP5fibNX8iahk3CNFc4gF5Gnb9Unu3lmsQdmeO0CSYaIoH1tIb3xQ/132',
         '上天', '1', '1', '1');
 INSERT INTO `user` (`id`, `password`, `loginName`, `mobile`, `email`, `nick`, `avatar`, `location`, `sex`, `enabled`,
                     `verified`)
-VALUES ('2', '$2a$10$7euayjUpvbMPdj2rG1H2ueysP/AezgRaHlDAstZgN5Cw9Li/PXwOi', 'super', '10000000001', 'super@ikeyi.com',
+VALUES ('2', '$2a$10$7euayjUpvbMPdj2rG1H2ueysP/AezgRaHlDAstZgN5Cw9Li/PXwOi', 'super', '10000000001', 'ikeyit@foxmail.com',
         '元始天尊',
         'http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKeRIqwBBgdTiaF3DicEnZMdee9KrP5fibNX8iahk3CNFc4gF5Gnb9Unu3lmsQdmeO0CSYaIoH1tIb3xQ/132',
         '上天', '0', '1', '1');
-
 
 INSERT INTO `role` (`id`, `name`, `displayName`)
 VALUES ('1', 'seller', '卖家');
@@ -149,3 +148,13 @@ INSERT INTO `user_role` (`userId`, `roleId`)
 VALUES ('2', '1');
 INSERT INTO `user_role` (`userId`, `roleId`)
 VALUES ('2', '2');
+
+INSERT INTO `user` (`id`, `password`, `loginName`, `mobile`, `email`, `nick`, `avatar`, `location`, `sex`, `enabled`,
+                    `verified`)
+VALUES ('3', '$2a$10$7euayjUpvbMPdj2rG1H2ueysP/AezgRaHlDAstZgN5Cw9Li/PXwOi', 'demo', '10000000002', 'demo@demo',
+           '演示账户',
+           'http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKeRIqwBBgdTiaF3DicEnZMdee9KrP5fibNX8iahk3CNFc4gF5Gnb9Unu3lmsQdmeO0CSYaIoH1tIb3xQ/132',
+           '上天', '0', '1', '1');
+
+INSERT INTO `user_role` (`userId`, `roleId`)
+VALUES ('3', '1');

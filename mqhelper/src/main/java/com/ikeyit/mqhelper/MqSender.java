@@ -195,7 +195,6 @@ public class MqSender {
      *
      */
     public void resend() {
-        log.info("开始重发MQ消息");
         //TODO 考虑极端情况： 1.总是发送失败
         List<MqMessage> mqMessages = mqMessageRepository.getTimeout(messageTimeout, 1000);
         for (MqMessage mqMessage : mqMessages) {

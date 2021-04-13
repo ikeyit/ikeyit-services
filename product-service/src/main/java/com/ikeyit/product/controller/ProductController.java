@@ -1,13 +1,12 @@
 package com.ikeyit.product.controller;
 
+import com.ikeyit.common.domain.Page;
 import com.ikeyit.product.dto.ProductDTO;
 import com.ikeyit.product.dto.ReduceStockParam;
 import com.ikeyit.product.dto.SkuDTO;
 import com.ikeyit.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class ProductController {
@@ -22,7 +21,7 @@ public class ProductController {
 
 
     @GetMapping("products")
-    public List<ProductDTO> getProductsByShopId(@RequestParam Long sellerId,
+    public Page<ProductDTO> getProductsByShopId(@RequestParam Long sellerId,
                                                 @RequestParam(required = false) String sort) {
         return productService.getProductsByShop(sellerId, sort);
     }

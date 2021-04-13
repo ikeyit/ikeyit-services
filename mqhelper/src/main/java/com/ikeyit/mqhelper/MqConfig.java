@@ -28,6 +28,7 @@ public class MqConfig {
                 getConverters();
         for (MessageConverter converter : converters) {
             if (converter instanceof MappingJackson2MessageConverter) {
+                //修正时间序列化不正确的问题
                 MappingJackson2MessageConverter jackson2MessageConverter = (MappingJackson2MessageConverter) converter;
                 ObjectMapper objectMapper = new ObjectMapper();
                 JavaTimeModule javaTimeModule = new JavaTimeModule();
@@ -44,6 +45,5 @@ public class MqConfig {
     @Bean
     public LockProvider lockProvider(RedisTemplate redisTemplate) {
         return new RedisLockProvider(redisTemplate.getConnectionFactory());
-
     }
 }

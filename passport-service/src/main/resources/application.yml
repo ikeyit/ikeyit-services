@@ -34,7 +34,9 @@ spring:
     properties.mail.smtp.starttls.enable: true
     properties.mail.smtp.starttls.required: true
     properties.mail.smtp.ssl.enable: true
-
+  messages:
+    encoding: UTF-8
+    basename: messages
 rocketmq:
   name-server: localhost:9876
   producer:

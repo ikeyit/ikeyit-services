@@ -47,7 +47,7 @@ CREATE TABLE `pay_order` (
                              PRIMARY KEY (`id`),
                              UNIQUE KEY `orderType` (`orderType`,`orderId`),
                              UNIQUE KEY `tradeNo` (`tradeNo`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000000010 DEFAULT CHARSET=utf8 COMMENT='支付结果';
+) ENGINE=InnoDB AUTO_INCREMENT=1000000020 DEFAULT CHARSET=utf8 COMMENT='支付结果';
 
 CREATE TABLE `pay_refund_order` (
                                     `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '退款订单ID',
@@ -68,7 +68,7 @@ CREATE TABLE `pay_refund_order` (
                                     PRIMARY KEY (`id`),
                                     UNIQUE KEY `refundType` (`refundType`,`refundId`),
                                     UNIQUE KEY `refundNo` (`refundNo`)
-) ENGINE=InnoDB AUTO_INCREMENT=2000000002 DEFAULT CHARSET=utf8 COMMENT='支付结果';
+) ENGINE=InnoDB AUTO_INCREMENT=2000000020 DEFAULT CHARSET=utf8 COMMENT='支付结果';
 
 CREATE TABLE `trade_order` (
                                `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',

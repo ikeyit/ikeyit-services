@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorCon
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -54,36 +55,43 @@ public class RestErrorController extends AbstractErrorController {
      * @return
      */
     @RequestMapping(PATH)
-    public ResponseEntity<ErrorResponse> error(HttpServletRequest request, Locale locale) {
+    public ResponseEntity<ErrorResponse> error(HttpServletRequest request) {
+        ServletWebRequest webRequest = new ServletWebRequest(request);
+        Throwable exception = errorAttributes.getError(webRequest);
+        if (exception != null) {
+            log.error("服务器出现异常，潜在BUG", exception);
+            return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, CommonErrorCode.INTERNAL_SERVER_ERROR);
+        }
+
         HttpStatus status = getStatus(request);
         Map<String, Object> attributes = getErrorAttributes(request, ErrorAttributeOptions.of(
                 ErrorAttributeOptions.Include.EXCEPTION,
                 ErrorAttributeOptions.Include.MESSAGE));
+        String path = (String) attributes.get("path");
+        String message = (String) attributes.get("message");
         if (HttpStatus.NOT_FOUND == status) {
-            return buildErrorResponse(HttpStatus.NOT_FOUND, CommonErrorCode.NOT_FOUND, locale, attributes.get("path"));
+            return buildErrorResponse(HttpStatus.NOT_FOUND, CommonErrorCode.NOT_FOUND, new Object[]{path});
         } else if (HttpStatus.FORBIDDEN == status) {
-            return buildErrorResponse(HttpStatus.FORBIDDEN, CommonErrorCode.FORBIDDEN, locale, attributes.get("path"));
+            return buildErrorResponse(HttpStatus.FORBIDDEN, CommonErrorCode.FORBIDDEN,  new Object[]{message});
         } else if (HttpStatus.UNAUTHORIZED == status) {
-            return buildErrorResponse(HttpStatus.UNAUTHORIZED, CommonErrorCode.UNAUTHORIZED, locale, attributes.get("path"));
+            return buildErrorResponse(HttpStatus.UNAUTHORIZED, CommonErrorCode.UNAUTHORIZED,  new Object[]{message});
         }
 
-        ServletWebRequest webRequest = new ServletWebRequest(request);
-        Throwable exception = errorAttributes.getError(webRequest);
-
-        log.error("出错了：" + attributes, exception);
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, CommonErrorCode.INTERNAL_SERVER_ERROR, locale, (Object[]) null);
+        log.error("未处理错误:{}", message);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, CommonErrorCode.INTERNAL_SERVER_ERROR);
     }
 
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException exception, Locale locale){
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException exception){
         ErrorCode errorCode = exception.getErrorCode();
 
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, errorCode, locale, exception.getParams());
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, errorCode, exception.getParams());
     }
 
     @ExceptionHandler(ServiceException.class)
-    public ResponseEntity<ErrorResponse> handleServiceException(ServiceException exception, Locale locale){
+    public ResponseEntity<ErrorResponse> handleServiceException(ServiceException exception){
+
         ErrorResponse errorResponse =  new ErrorResponse(exception.getCode(), exception.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(exception.getStatus()));
     }
@@ -95,8 +103,8 @@ public class RestErrorController extends AbstractErrorController {
      * @return
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException exception, Locale locale){
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, CommonErrorCode.INVALID_ARGUMENT, locale, new String[]{exception.getMessage()});
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException exception){
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, CommonErrorCode.INVALID_ARGUMENT, new Object[]{exception.getMessage()});
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class,
@@ -104,16 +112,16 @@ public class RestErrorController extends AbstractErrorController {
             MethodArgumentNotValidException.class,
             HttpMessageNotReadableException.class,
             MethodArgumentTypeMismatchException.class})
-    public ResponseEntity<ErrorResponse> handleInvalidArgumentException(Exception exception, Locale locale) {
+    public ResponseEntity<ErrorResponse> handleInvalidArgumentException(Exception exception) {
         log.error("出错了：", exception);
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, CommonErrorCode.INVALID_ARGUMENT, locale, (Object[]) null);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, CommonErrorCode.INVALID_ARGUMENT);
     }
 
 
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<ErrorResponse> handleException(Throwable exception, Locale locale){
+    public ResponseEntity<ErrorResponse> handleException(Throwable exception){
         log.error("出错了：", exception);
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, CommonErrorCode.INTERNAL_SERVER_ERROR, locale, (Object[]) null);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, CommonErrorCode.INTERNAL_SERVER_ERROR);
     }
 
 
@@ -122,8 +130,19 @@ public class RestErrorController extends AbstractErrorController {
         return PATH;
     }
 
-    private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus httpStatus, ErrorCode errorCode, Locale locale, Object... params) {
+    private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus httpStatus, ErrorCode errorCode) {
+        return buildErrorResponse(httpStatus, errorCode, null, null);
+    }
+
+
+    private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus httpStatus, ErrorCode errorCode, Object[] params) {
+        return buildErrorResponse(httpStatus, errorCode, params, null);
+    }
+
+    private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus httpStatus, ErrorCode errorCode, Object[] params, Locale locale) {
         String code = errorCode.getCode();
+        if (locale == null)
+            locale = LocaleContextHolder.getLocale();
         //国际化异常message
         String message = messageSource.getMessage(messagePrefix + code, params, errorCode.getMessage(), locale);
         ErrorResponse errorResponse = new ErrorResponse(code, message);

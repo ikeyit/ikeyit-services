@@ -8,7 +8,7 @@ public enum CommonErrorCode implements ErrorCode {
 
     FORBIDDEN("FORBIDDEN", "没有足够的权限，禁止访问"),
 
-    UNAUTHORIZED("UNAUTHORIZED", "需要认证"),
+    UNAUTHORIZED("UNAUTHORIZED", "{0}"),
 
     NOT_FOUND("NOT_FOUND","请求路径{0}不存在"),
 

@@ -120,4 +120,61 @@ public interface ProductRepository {
                 countBySellerId(sellerId, status, id, title, model));
     }
 
+
+    @Select({
+            "<script>",
+            "SELECT * FROM product LEFT JOIN shop_category_product ON product.id = shop_category_product.productId <where>",
+            "product.sellerId = #{sellerId} AND product.status = #{status} AND (shop_category_product.shopCategoryId1 = #{shopCategoryId} OR shop_category_product.shopCategoryId2 = #{shopCategoryId}) ",
+            "</where>",
+            "ORDER BY ",
+            "<choose>",
+            "<when test=\"sortCriteria == 'price_desc'\">",
+            "product.price DESC ",
+            "</when>",
+            "<when test=\"sortCriteria == 'price_asc'\">",
+            "product.price ASC ",
+            "</when>",
+            "<when test=\"sortCriteria == 'sales_desc'\">",
+            "product.sales DESC ",
+            "</when>",
+            "<when test=\"sortCriteria == 'sales_asc'\">",
+            "product.sales ASC ",
+            "</when>",
+            "<when test=\"sortCriteria == 'stock_desc'\">",
+            "product.sales DESC ",
+            "</when>",
+            "<when test=\"sortCriteria == 'stock_asc'\">",
+            "product.sales ASC ",
+            "</when>",
+            "<when test=\"sortCriteria == 'createTime_asc'\">",
+            "product.id ASC ",
+            "</when>",
+            "<otherwise>",
+            "product.id DESC ",
+            " </otherwise>",
+            "</choose>",
+            "<if test=\"pageParam != null\">",
+            "LIMIT #{pageParam.pageSize} OFFSET #{pageParam.offset}",
+            "</if>",
+            "</script>"
+    })
+    List<Product> listBySellerIdAndShopCategoryId(Long sellerId, Long shopCategoryId, Integer status, String sortCriteria, PageParam pageParam);
+
+
+    @Select({
+            "<script>",
+            "SELECT COUNT(*) FROM product LEFT JOIN shop_category_product ON product.id = shop_category_product.productId <where>",
+            "product.sellerId = #{sellerId} AND product.status = #{status} AND (shop_category_product.shopCategoryId1 = #{shopCategoryId} OR shop_category_product.shopCategoryId2 = #{shopCategoryId}) ",
+            "</where>",
+            "</script>"
+    })
+    long countBySellerIdAndShopCategoryId(Long sellerId, Long shopCategoryId, Integer status);
+
+
+    default Page<Product> getBySellerIdAndShopCategoryId(Long sellerId, Long shopCategoryId, Integer status, String sortCriteria, PageParam pageParam) {
+        return new Page<>(
+                listBySellerIdAndShopCategoryId(sellerId, shopCategoryId, status, sortCriteria, pageParam),
+                pageParam,
+                countBySellerIdAndShopCategoryId(sellerId, shopCategoryId, status));
+    }
 }

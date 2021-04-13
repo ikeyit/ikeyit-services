@@ -5,8 +5,6 @@ public class UserDTO {
 
     String loginName;
 
-    String password;
-
     String mobile;
 
     String email;
@@ -37,14 +35,6 @@ public class UserDTO {
 
     public void setLoginName(String loginName) {
         this.loginName = loginName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getMobile() {

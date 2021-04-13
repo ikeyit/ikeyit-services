@@ -3,9 +3,12 @@ package com.ikeyit.user.service;
 
 import com.ikeyit.common.domain.Page;
 import com.ikeyit.common.domain.PageParam;
+import com.ikeyit.common.exception.BusinessException;
+import com.ikeyit.common.utils.PrivacyUtils;
 import com.ikeyit.passport.resource.AuthenticationService;
 import com.ikeyit.user.domain.UserDetail;
 import com.ikeyit.user.dto.UserDetailDTO;
+import com.ikeyit.user.exception.UserErrorCode;
 import com.ikeyit.user.repository.UserDetailRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +33,7 @@ public class UserService {
     public UserDetailDTO getUser(Long id) {
         UserDetail userDetail = userRepository.getById(id);
         if (userDetail == null)
-            throw new IllegalArgumentException("用户不存在");
+            throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
         return buildUserDetailDTO(userDetail);
     }
 
@@ -39,7 +42,7 @@ public class UserService {
         Long userId = authenticationService.getCurrentUserId();
         UserDetail userDetail = userRepository.getById(userId);
         if (userDetail == null)
-            throw new IllegalArgumentException("用户不存在");
+            throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
         if (nick != null)
             userDetail.setNick(nick);
         if (avatar != null)
@@ -55,56 +58,12 @@ public class UserService {
         return Page.map(userDetails, this::buildUserDetailDTO);
     }
 
-    /**
-     * 脱敏，隐藏个人信息
-     * @param text 带脱敏的文字
-     * @param size 被*替代的长度
-     * @return
-     */
-    private String hidePrivacy(String text, int size) {
-        if (text == null || text.length() == 0)
-            return text;
-
-        int len = text.length();
-        char[] chars = new char[len];
-        if (len >= size + 2) {
-            //开头和末尾都有显示的字符
-            int startLen = (len - size) / 2;
-            int i = 0;
-            for (;i < startLen; i++)
-                chars[i] = text.charAt(i);
-            for (;i < startLen + size; i++)
-                chars[i] = '*';
-            for (;i < len; i++)
-                chars[i] = text.charAt(i);
-        } else if (len <= size + 1) {
-            //仅开头显示1个字符
-            int i = 0;
-            chars[i] = text.charAt(i);
-            for (i++;i < len;i++)
-                chars[i] = '*';
-        }
-
-        return new String(chars);
-    }
-
-    private String hideMobile(String mobile) {
-        return hidePrivacy(mobile, 4);
-    }
-
-    private String hideEmail(String email) {
-        if (email == null || email.length() == 0)
-            return email;
-        String[] parts = email.split("@");
-        return hidePrivacy(parts[0], 4) + '@' + parts[1];
-    }
-
     private UserDetailDTO buildUserDetailDTO(UserDetail userDetail) {
         UserDetailDTO userDetailDTO = new UserDetailDTO();
         BeanUtils.copyProperties(userDetail, userDetailDTO);
         //脱敏
-        userDetailDTO.setMobile(hideMobile(userDetail.getMobile()));
-        userDetailDTO.setEmail(hideEmail(userDetail.getEmail()));
+        userDetailDTO.setMobile(PrivacyUtils.hidePrivacy(userDetail.getMobile(), 4));
+        userDetailDTO.setEmail(PrivacyUtils.hideEmail(userDetail.getEmail(), 4));
         return userDetailDTO;
     }
 }

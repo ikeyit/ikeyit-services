@@ -14,4 +14,5 @@ public class WebConfig {
     public RestErrorController globalErrorController(ErrorAttributes errorAttributes, MessageSource messageSource) {
         return new RestErrorController(errorAttributes, messageSource);
     }
+
 }

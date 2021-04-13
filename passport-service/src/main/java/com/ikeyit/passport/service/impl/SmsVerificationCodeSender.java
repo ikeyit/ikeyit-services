@@ -31,6 +31,7 @@ public class SmsVerificationCodeSender implements VerificationCodeSender {
 //            }
 //        });
 
+        System.out.println(verificationCode.getCode());
         return true;
     }
 }

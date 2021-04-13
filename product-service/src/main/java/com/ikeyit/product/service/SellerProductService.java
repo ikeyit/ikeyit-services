@@ -7,6 +7,7 @@ import com.ikeyit.common.domain.Page;
 import com.ikeyit.common.domain.PageParam;
 import com.ikeyit.common.exception.BusinessException;
 import com.ikeyit.common.exception.CommonErrorCode;
+import com.ikeyit.mqhelper.MqSender;
 import com.ikeyit.passport.resource.AuthenticationService;
 import com.ikeyit.product.domain.*;
 import com.ikeyit.product.dto.*;
@@ -114,6 +115,9 @@ public class SellerProductService {
     @Autowired
     ProductAttributeValueRepository  productAttributeValueRepository;
 
+    @Autowired
+    MqSender mqSender;
+
     /**
      * 创建商品
      * @param editProductParam
@@ -162,6 +166,7 @@ public class SellerProductService {
             skuRepository.create(sku);
         }
 
+        mqSender.asyncSendAfterCommit("product:create", product.getId(), "product-" + product.getId());
     }
 
     /**
@@ -239,6 +244,8 @@ public class SellerProductService {
         for (Sku sku : preSkus.values()) {
             skuRepository.updateStatus(sku.getId(), Sku.STATUS_DELETED);
         }
+
+        mqSender.asyncSendAfterCommit("product:update", product.getId(), "product-" + product.getId());
     }
 
     private void validateCoreParam(EditProductParam editProductParam, Product product) {
@@ -532,6 +539,9 @@ public class SellerProductService {
             throw new BusinessException(ProductErrorCode.PRODUCT_ILLEGAL_STATUS);
         if (productRepository.updateStatus(productId, status, Product.STATUS_ON) != 1)
             throw new BusinessException(ProductErrorCode.PRODUCT_ILLEGAL_STATUS);
+
+
+        mqSender.asyncSend("product:onSale", product.getId(), "product-" + product.getId());
     }
 
     /**
@@ -547,6 +557,8 @@ public class SellerProductService {
             throw new BusinessException(ProductErrorCode.PRODUCT_ILLEGAL_STATUS);
         if (productRepository.updateStatus(productId, status, Product.STATUS_OFF) != 1)
             throw new BusinessException(ProductErrorCode.PRODUCT_ILLEGAL_STATUS);
+
+        mqSender.asyncSend("product:offSale", product.getId(), "product-" + product.getId());
     }
 
 

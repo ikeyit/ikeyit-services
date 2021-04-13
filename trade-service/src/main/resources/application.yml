@@ -33,6 +33,8 @@ rocketmq:
   name-server: localhost:9876
   producer:
     group: group-trade
+mqhelper:
+  lockName: mqhelper-trade
 
 payService:
   prefix: test_

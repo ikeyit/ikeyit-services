@@ -8,6 +8,9 @@ import com.ikeyit.passport.service.AccountAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 超级用户对用户进行管理
+ */
 @RestController
 @RequestMapping("/super")
 public class AccountAdminController {

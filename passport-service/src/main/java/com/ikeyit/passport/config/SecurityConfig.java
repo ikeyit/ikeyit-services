@@ -224,11 +224,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         bearerTokenResolver.setAllowUriQueryParameter(true);
         bearerTokenResolver.setAllowFormEncodedBodyParameter(true);
         return bearerTokenResolver;
-
     }
 
     private void accessDeniedHandler(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exception) throws IOException {
-        response.sendError(HttpServletResponse.SC_FORBIDDEN,  exception.getMessage());
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, exception.getMessage());
     }
 
     private void authenticationEntryPoint(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {

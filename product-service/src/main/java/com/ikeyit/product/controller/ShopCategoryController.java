@@ -13,7 +13,7 @@ public class ShopCategoryController {
     ShopCategoryService shopCategoryService;
 
     @GetMapping("seller/shop_categories")
-    public List<ShopCategoryDTO> getShopCategories() {
+    public List<ShopCategoryDTO> getSellerShopCategories() {
         return shopCategoryService.getShopCategories();
     }
 

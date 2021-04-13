@@ -53,6 +53,10 @@ public class JwtConfigurer<B extends HttpSecurityBuilder<B>>
         this.refreshTokenUrl = refreshTokenUrl;
         return this;
     }
+    public JwtConfigurer<B>  jwtAuthenticationFailureHandler(JwtAuthenticationFailureHandler jwtAuthenticationFailureHandler) {
+        this.jwtAuthenticationFailureHandler = jwtAuthenticationFailureHandler;
+        return this;
+    }
 
 
     private JwtService getJwtService(B builder) {
@@ -77,7 +81,8 @@ public class JwtConfigurer<B extends HttpSecurityBuilder<B>>
 
     @Override
     public void init(B builder) {
-        jwtAuthenticationFailureHandler = new JwtAuthenticationFailureHandler();
+        if (jwtAuthenticationFailureHandler == null)
+            jwtAuthenticationFailureHandler = new JwtAuthenticationFailureHandler();
         jwtAuthenticationSuccessHandler = new JwtAuthenticationSuccessHandler(getJwtService(builder));
         FormLoginConfigurer<B> formLoginConfigurer = getBuilder().getConfigurer(
                 FormLoginConfigurer.class);

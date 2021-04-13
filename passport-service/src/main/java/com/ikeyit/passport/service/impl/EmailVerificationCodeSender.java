@@ -30,7 +30,7 @@ public class EmailVerificationCodeSender implements VerificationCodeSender {
         email.setFrom("ikeyit");
         email.setMailTo(new String[]{destination});
         email.setSubject("邮箱验证");
-        email.setTemplate("update_email");
+        email.setTemplate(template);
         email.getModel().put("code", verificationCode.getCode());
         email.getModel().put("expireTime",  DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(verificationCode.getExpireTime()));
         mqTemplate.asyncSend("email", email, new SendCallback() {

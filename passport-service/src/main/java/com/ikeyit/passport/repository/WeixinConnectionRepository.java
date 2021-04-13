@@ -13,8 +13,8 @@ import java.util.List;
 @Repository
 public interface WeixinConnectionRepository {
 
-	@Insert("INSERT INTO weixin_connection (userId, appId, appName, unionId, openId)" +
-			"		VALUES (#{userId},#{appId},#{appName},#{unionId},#{openId})")
+	@Insert("INSERT INTO weixin_connection (userId, appId, unionId, openId)" +
+			"		VALUES (#{userId},#{appId}, #{unionId},#{openId})")
 	void create(WeixinConnection weixinConnection);
 
 	@Select("SELECT * FROM weixin_connection WHERE userId = #{userId}")

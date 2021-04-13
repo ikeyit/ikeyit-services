@@ -120,7 +120,9 @@ public class UserPrincipalService implements UserDetailsService, MobileUserServi
         user.setLoginName(IdUtils.uuid());
         user.setMobile(mobile);
         user.setAvatar(avatar);
+        user.setEnabled(Boolean.TRUE);
         user.setNick(nick);
+        user.setVerified(Boolean.TRUE);
         userRepository.create(user);
         return user;
     }

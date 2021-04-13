@@ -65,4 +65,11 @@ public class Page<T> {
         List<R>  content = page.getContent().stream().map(mapper).collect(Collectors.toList());
         return new Page<R>(content, page.page, page.pageSize, page.total);
     }
+
+    public static final Page EMPTY = new Page<>(null, 1, 1, 0);
+
+    public static final <T> Page<T> emptyPage() {
+        return (Page<T>) EMPTY;
+    }
+
 }

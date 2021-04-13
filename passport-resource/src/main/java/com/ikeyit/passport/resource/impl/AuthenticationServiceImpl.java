@@ -28,6 +28,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    public Long pollCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null)
+            return null;
+        try {
+            return Long.parseLong(authentication.getName());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
     public boolean hasAuthority(String authority) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null)

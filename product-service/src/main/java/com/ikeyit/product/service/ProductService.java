@@ -4,6 +4,8 @@ package com.ikeyit.product.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.ikeyit.common.domain.Page;
+import com.ikeyit.common.domain.PageParam;
 import com.ikeyit.common.exception.BusinessException;
 import com.ikeyit.common.exception.CommonErrorCode;
 import com.ikeyit.product.domain.*;
@@ -17,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -115,28 +116,37 @@ public class ProductService {
         return productDTO;
     }
 
+    private ProductDTO buildSimpleProductDTO(Product product) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(product.getId());
+        productDTO.setSellerId(product.getSellerId());
+        productDTO.setTitle(product.getTitle());
+        productDTO.setImage(product.getImage());
+        productDTO.setSales(product.getSales());
+        productDTO.setPrice(product.getPrice());
+        return productDTO;
+    }
 
-    public List<ProductDTO> getProductsByShop(Long sellerId, String sort) {
+    public Page<ProductDTO> getProductsByShop(Long sellerId, String sort) {
         if (sort == null) {
             sort = "createTime_desc";
         } else if (!StringUtils.equalsAny(sort, "createTime_desc", "createTime_asc", "sales_desc", "sales_asc","price_desc", "price_asc")) {
             throw new BusinessException(CommonErrorCode.INVALID_ARGUMENT);
         }
 
-        List<Product> products = productRepository.listBySellerId(sellerId, Product.STATUS_ON, null, null, null, sort, null);
-        List<ProductDTO> productDTOs = new ArrayList<>();
-        for (Product product : products) {
-            ProductDTO productDTO = new ProductDTO();
-            productDTO.setId(product.getId());
-            productDTO.setSellerId(product.getSellerId());
-            productDTO.setTitle(product.getTitle());
-            productDTO.setImage(product.getImage());
-            productDTO.setSales(product.getSales());
-            productDTO.setPrice(product.getPrice());
-            productDTOs.add(productDTO);
+        Page<Product> products = productRepository.getBySellerId(sellerId, Product.STATUS_ON, null, null, null, sort, null);
+        return Page.map(products, this::buildSimpleProductDTO);
+    }
+
+    public Page<ProductDTO> getProductsByShopCategory(Long sellerId, Long shopCategoryId, String sort, PageParam pageParam) {
+        if (sort == null) {
+            sort = "createTime_desc";
+        } else if (!StringUtils.equalsAny(sort, "createTime_desc", "createTime_asc", "sales_desc", "sales_asc","price_desc", "price_asc")) {
+            throw new BusinessException(CommonErrorCode.INVALID_ARGUMENT);
         }
 
-        return productDTOs;
+        Page<Product> shopCategoryProducts = productRepository.getBySellerIdAndShopCategoryId(sellerId, shopCategoryId, Product.STATUS_ON, sort, pageParam);
+        return Page.map(shopCategoryProducts, this::buildSimpleProductDTO);
     }
 
 

@@ -32,8 +32,11 @@ spring:
       time-to-live: 600000
       use-key-prefix: true
 
+elasticsearch:
+  server: localhost:9200
 rocketmq:
   name-server: localhost:9876
   producer:
     group: group-product
-
+mqhelper:
+  lockName: mqhelper-product

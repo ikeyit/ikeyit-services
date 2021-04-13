@@ -1,12 +1,11 @@
 package com.ikeyit.passport.dto;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 
-public class SendEmailVerificationParam {
+public class SendEmailVerificationCodeParam {
+
 
     @Email
-    @NotEmpty
     private String email;
 
     public String getEmail() {
@@ -16,4 +15,6 @@ public class SendEmailVerificationParam {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
 }

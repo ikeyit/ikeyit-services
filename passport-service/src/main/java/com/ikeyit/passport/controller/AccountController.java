@@ -1,41 +1,39 @@
 package com.ikeyit.passport.controller;
 
 
-import com.ikeyit.passport.dto.SendEmailVerificationParam;
-import com.ikeyit.passport.dto.UpdateEmailParam;
-import com.ikeyit.passport.dto.UpdatePasswordParam;
-import com.ikeyit.passport.dto.ValidateVerificationCodeParam;
+import com.ikeyit.passport.dto.*;
 import com.ikeyit.passport.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * 账号与安全相关
+ */
 @RestController
+@RequestMapping("/account")
 public class AccountController {
-
 
     @Autowired
     private AccountService accountService;
 
-    @PostMapping("/password/smscode")
-    public void updatePasswordSendSmsCode() {
-        accountService.updatePasswordSendSmsCode();
+    @GetMapping("/user")
+    public UserDTO getUser() {
+        return accountService.getUser();
     }
 
-    @PostMapping("/old_email/verification")
-    public void sendUpdateEmailVerificationOld() {
-        accountService.sendUpdateEmailVerificationOld();
+    @PostMapping("/security_check/verification/{way}")
+    public void sendVerificationCodeForCheckSecurity(@PathVariable String way) {
+        accountService.sendVerificationCodeForCheckSecurity(way);
     }
 
-    @PostMapping("/old_email/verification/validate")
-    public void validateUpdateEmailVerificationOld(@RequestBody ValidateVerificationCodeParam validateVerificationCodeParam) {
-        accountService.validateUpdateEmailVerificationOld(validateVerificationCodeParam);
+    @PostMapping("/security_check")
+    public void checkSecurity(@RequestBody CheckSecurityParam checkSecurityParam) {
+        accountService.checkSecurity(checkSecurityParam);
     }
 
     @PostMapping("/email/verification")
-    public void sendEmailVerification(@RequestBody SendEmailVerificationParam sendEmailVerificationParam) {
-        accountService.sendUpdateEmailVerificationNew(sendEmailVerificationParam);
+    public void sendVerificationCodeForUpdateEmail(@RequestBody SendEmailVerificationCodeParam sendEmailVerificationCodeParam) {
+        accountService.sendVerificationCodeForUpdateEmail(sendEmailVerificationCodeParam);
     }
 
     @PostMapping("/email")
@@ -43,30 +41,18 @@ public class AccountController {
         accountService.updateEmail(updateEmailParam);
     }
 
-    /**
-     * 更新当前用户的密码，通过验证码
-     * @param code
-     * @param newPassword
-     */
-    @PostMapping(path="/password", params = {"code"})
-    public void updatePasswordBySmsCode(String code, String newPassword) {
-        accountService.updatePasswordBySmsCode(code, newPassword);
+    @PostMapping("/mobile/verification")
+    public void sendVerificationCodeForUpdateMobile(@RequestBody SendMobileVerificationCodeParam sendMobileVerificationCodeParam) {
+        accountService.sendVerificationCodeForUpdateMobile(sendMobileVerificationCodeParam);
+    }
+
+    @PostMapping("/mobile")
+    public void updateMobile(@RequestBody UpdateMobileParam updateMobileParam) {
+        accountService.updateMobile(updateMobileParam);
     }
 
     @PostMapping("/password")
     public void updatePassword(@RequestBody UpdatePasswordParam updatePasswordParam) {
         accountService.updatePassword(updatePasswordParam);
     }
-
-    /**
-     * 更新当前用户的手机号
-     * @param mobile
-     * @param code
-     */
-    @PostMapping("/mobile")
-    public void updateMobile(String mobile, String code) {
-        accountService.updateMobile( mobile, code);
-    }
-
-
 }

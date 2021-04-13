@@ -221,6 +221,19 @@ CREATE TABLE `sku` (
 ) ENGINE=InnoDB AUTO_INCREMENT=100000 DEFAULT CHARSET=utf8 COMMENT='SKU';
 
 
+CREATE TABLE `mq_message` (
+                              `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '本地消息ID',
+                              `status` int(11) NOT NULL COMMENT '状态',
+                              `topic` varchar(64) NOT NULL COMMENT '主题',
+                              `payload` varchar(5120) NOT NULL COMMENT '负载',
+                              `messageKeys` varchar(256) NOT NULL COMMENT 'messageKeys',
+                              `deliverTime` timestamp NULL DEFAULT NULL,
+                              `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建日期',
+                              `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改日期',
+                              PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100000 DEFAULT CHARSET=utf8 COMMENT='本地消息表';
+
+
 INSERT INTO `attribute` (`id`, `name`, `position`, `inputType`, `searchType`, `attributeType`, `required`) VALUES ('1', '颜色', '0', '10', '1', '2', '1');
 INSERT INTO `attribute` (`id`, `name`, `position`, `inputType`, `searchType`, `attributeType`, `required`) VALUES ('2', '尺码', '0', '10', '1', '2', '1');
 INSERT INTO `attribute_value` (`id`, `attributeId`, `val`, `productId`, `position`) VALUES ('1', '1', '黑色', '0', '0');
